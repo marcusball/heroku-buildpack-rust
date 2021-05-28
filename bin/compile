@@ -36,6 +36,9 @@ DIESEL_FLAGS=""
 DIESEL_INSTALL_DIR="target/release/"
 # Default build flags to pass to `cargo build`.
 RUST_CARGO_BUILD_FLAGS="--release"
+# Set this to "1" in `RustConfig` if this should `touch` the `Cargo.toml` file in the `BUILD_PATH`.
+# This is mostly useful if you're dumb like me and like using diesel for migrations in non-Rust projects.
+TOUCH_CARGO_TOML=0
 
 # Load our toolchain configuration, if any was specified.
 if [ -f "$BUILD_DIR/rust-toolchain" ]; then
@@ -155,4 +158,10 @@ if [ $RUST_INSTALL_DIESEL -eq 1 ]; then
   cargo install diesel_cli --root "$CACHE_DIR/diesel_build" $DIESEL_FLAGS || echo "already installed"
 
   cp "$CACHE_DIR/diesel_build/bin/diesel" "$BUILD_DIR/$DIESEL_INSTALL_DIR"
+fi
+
+if [ $TOUCH_CARGO_TOML -eq 1 ]; then
+  echo "-----> Touch 👉"
+
+  touch "$BUILD_DIR/Cargo.toml"
 fi
