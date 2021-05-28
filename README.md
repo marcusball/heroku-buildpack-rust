@@ -1,7 +1,5 @@
 # Heroku buildpack for Rust
 
-[![Build Status](https://travis-ci.org/emk/heroku-buildpack-rust.svg?branch=master)](https://travis-ci.org/emk/heroku-buildpack-rust)
-
 This is a Heroku buildpack for Rust with support for [cargo][] and [rustup][].  Features include:
 
 - Caching of builds between deployments.
@@ -14,17 +12,12 @@ This is a Heroku buildpack for Rust with support for [cargo][] and [rustup][].  
 [cargo]: http://crates.io/
 [rustup]: https://www.rustup.rs/
 
-## Example projects
+## Intro
 
-Here are several example projects:
+This is a fork of [emk's heroku-buildpack-rust](https://github.com/emk/heroku-buildpack-rust) buildpack,
+with slight influence from [sgrif's heroku-buildpack-diesel](https://github.com/sgrif/heroku-buildpack-diesel) buildpack. 
 
-- [rust-buildpack-example-actix][] uses the popular [Actix][] framework, and runs on stable Rust.
-- [rust-buildpack-example-rocket][] uses the innovative [Rocket][] framework, which currently requires nightly Rust.
-
-[rust-buildpack-example-actix]: https://github.com/emk/rust-buildpack-example-actix
-[Actix]: https://actix.rs/
-[rust-buildpack-example-rocket]: https://github.com/emk/rust-buildpack-example-rocket
-[Rocket]: https://rocket.rs/
+This fork was made rather hastily, so for further info check their versions, but I'll try to be responsive and document the changes made. 
 
 ## Using this buildpack
 
@@ -33,7 +26,7 @@ To deploy an application to Heroku, we recommend installing the [Heroku CLI][].
 If you're creating a new Heroku application, `cd` to the directory containing your code, and run:
 
 ```sh
-heroku create --buildpack emk/rust
+heroku create --buildpack https://github.com/marcusball/heroku-buildpack-rust
 ```
 
 This will only work if your application has a `Cargo.toml` and uses `git`. If you want to set a particular name for application, see `heroku create --help` first.
@@ -41,7 +34,7 @@ This will only work if your application has a `Cargo.toml` and uses `git`. If yo
 To use this as the buildpack for an existing application, run:
 
 ```sh
-heroku buildpacks:set emk/rust
+heroku buildpacks:set https://github.com/marcusball/heroku-buildpack-rust
 ```
 
 You will also need to create a `Procfile` pointing to the release version of your application, and commit it to `git`:
@@ -87,7 +80,7 @@ Note: if you previously specified a `VERSION` variable in `RustConfig`, that wil
 If you have a project which combines both Rust and another programming language, you can insert this buildpack before your existing one as follows:
 
 ```sh
-heroku buildpacks:add --index 1 emk/rust
+heroku buildpacks:add --index 1 https://github.com/marcusball/heroku-buildpack-rust
 ```
 
 If you have a valid `Cargo.toml` in your project, this is all you need to do. The Rust buildpack will run first, and your existing buildpack will run second.
@@ -109,13 +102,34 @@ RUST_CARGO_BUILD_FLAGS="--release -p some_package --bin some_exe --bin some_bin_
 The default value of `RUST_CARGO_BUILD_FLAGS` is `--release`.
 If the variable is not set in `RustConfig`, the default value will be used to build the project.
 
-## Using the edge version of the buildpack
+## `RustConfig` Options
 
-The `emk/rust` buildpack from the [Heroku Registry](https://devcenter.heroku.com/articles/buildpack-registry) contains the latest stable version of the buildpack. If you'd like to use the latest buildpack code from this Github repository, you can set your buildpack to the Github URL:
+As noted above, there are several options you can specify in a `RustConfig` file to tweak this buildpack. 
 
-```sh
-heroku buildpacks:set https://github.com/emk/heroku-buildpack-rust
-```
+### `RUST_SKIP_BUILD`
+
+Set this to "1" to just install a Rust toolchain and not build `Cargo.toml`.  This is useful if you have a project written in Ruby or Node (for example) that needs to build extension modules using Rust.
+
+Default value: `0`
+### `BUILD_PATH`
+
+If your Rust code is not at the root directory of the repository, specify a `BUILD_PATH` to the correct directory.
+
+Default value `""` (the project root)
+
+### RUST_INSTALL_DIESEL
+
+Set this to "1" to install diesel at build time and copy it
+into the target directory, next to your app binary. This makes it easy to
+# run migrations by adding a release step to your Procfile:
+# `release: ./target/release/diesel migration run`
+
+# These flags are passed to `cargo install diesel`, e.g. '--no-default-features --features postgres'
+DIESEL_FLAGS=""
+# Directory into which the `diesel` binary will be copied after it is built. 
+DIESEL_INSTALL_DIR="target/release/"
+# Default build flags to pass to `cargo build`.
+RUST_CARGO_BUILD_FLAGS="--release"
 
 ## Development notes
 

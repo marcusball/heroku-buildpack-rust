@@ -32,6 +32,8 @@ BUILD_PATH=""
 RUST_INSTALL_DIESEL=0
 # These flags are passed to `cargo install diesel`, e.g. '--no-default-features --features postgres'
 DIESEL_FLAGS=""
+# Directory into which the `diesel` binary will be copied after it is built. 
+DIESEL_INSTALL_DIR="target/release/"
 # Default build flags to pass to `cargo build`.
 RUST_CARGO_BUILD_FLAGS="--release"
 
@@ -147,6 +149,10 @@ fi
 # Install diesel so we can use it for migrations
 if [ $RUST_INSTALL_DIESEL -eq 1 ]; then
   echo "-----> Installing diesel"
-  cargo install diesel_cli $DIESEL_FLAGS || echo "already installed"
-  cp $(which diesel) target/release/
+
+  mkdir -p "$BUILD_DIR/$DIESEL_INSTALL_DIR"
+
+  cargo install diesel_cli --root "$CACHE_DIR/diesel_build" $DIESEL_FLAGS || echo "already installed"
+
+  cp "$CACHE_DIR/diesel_build/bin/diesel" "$BUILD_DIR/$DIESEL_INSTALL_DIR"
 fi
