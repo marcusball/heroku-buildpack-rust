@@ -1,5 +1,16 @@
 # Heroku buildpack for Rust
 
+## Intro
+
+This is a fork of [emk's heroku-buildpack-rust](https://github.com/emk/heroku-buildpack-rust) buildpack,
+with slight influence from [sgrif's heroku-buildpack-diesel](https://github.com/sgrif/heroku-buildpack-diesel) buildpack. 
+
+Currently, the main changes are just additional options for the `RustConfig` file, which can be seen documented below.
+
+This fork was made rather hastily, so for further info check their versions, but I'll try to be responsive and document the changes made. Feel free to open issues if you find any problems or have any requests.
+
+## About
+
 This is a Heroku buildpack for Rust with support for [cargo][] and [rustup][].  Features include:
 
 - Caching of builds between deployments.
@@ -12,12 +23,7 @@ This is a Heroku buildpack for Rust with support for [cargo][] and [rustup][].  
 [cargo]: http://crates.io/
 [rustup]: https://www.rustup.rs/
 
-## Intro
 
-This is a fork of [emk's heroku-buildpack-rust](https://github.com/emk/heroku-buildpack-rust) buildpack,
-with slight influence from [sgrif's heroku-buildpack-diesel](https://github.com/sgrif/heroku-buildpack-diesel) buildpack. 
-
-This fork was made rather hastily, so for further info check their versions, but I'll try to be responsive and document the changes made. 
 
 ## Using this buildpack
 
@@ -102,7 +108,7 @@ RUST_CARGO_BUILD_FLAGS="--release -p some_package --bin some_exe --bin some_bin_
 The default value of `RUST_CARGO_BUILD_FLAGS` is `--release`.
 If the variable is not set in `RustConfig`, the default value will be used to build the project.
 
-## `RustConfig` Options
+## `RustConfig` file options
 
 As noted above, there are several options you can specify in a `RustConfig` file to tweak this buildpack. 
 
@@ -146,7 +152,7 @@ The directory into which the `diesel` binary will be copied after it is built. T
 
 Default value: `"target/release/"`
 
-### `TOUCH_CARGO_TOML`
+### `TOUCH_CARGO_TOML` (added in this fork)
 
 Set this to "1" if this should `touch` the `Cargo.toml` file in the `BUILD_PATH`. This is mostly useful if you're dumb like me and like using diesel for migrations in non-Rust projects.
 
