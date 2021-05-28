@@ -117,19 +117,35 @@ If your Rust code is not at the root directory of the repository, specify a `BUI
 
 Default value `""` (the project root)
 
-### RUST_INSTALL_DIESEL
+### `RUST_INSTALL_DIESEL`
 
-Set this to "1" to install diesel at build time and copy it
-into the target directory, next to your app binary. This makes it easy to
-# run migrations by adding a release step to your Procfile:
-# `release: ./target/release/diesel migration run`
+Set this to "1" to install diesel at build time and copy it into the target directory, next to your app binary. This makes it easy to run migrations by adding a release step to your Procfile:
 
-# These flags are passed to `cargo install diesel`, e.g. '--no-default-features --features postgres'
-DIESEL_FLAGS=""
-# Directory into which the `diesel` binary will be copied after it is built. 
-DIESEL_INSTALL_DIR="target/release/"
-# Default build flags to pass to `cargo build`.
-RUST_CARGO_BUILD_FLAGS="--release"
+```
+release: ./target/release/diesel migration run
+```
+
+Default value: `0`
+
+### `DIESEL_FLAGS`
+
+These flags are passed to `cargo install diesel`, e.g. '--no-default-features --features postgres'
+
+Do **not** use the `--root` flag.
+
+Default value: `""`
+
+### `RUST_CARGO_BUILD_FLAGS` 
+
+Default build flags to pass to `cargo build`.
+
+Default value: `"--release"`
+### `DIESEL_INSTALL_DIR` (added in this fork)
+
+The directory into which the `diesel` binary will be copied after it is built. This is relative to the root of the project; it is **not** influenced by `BUILD_PATH`.
+
+Default value: `"target/release/"`
+
 
 ## Development notes
 
