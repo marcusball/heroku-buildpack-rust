@@ -146,6 +146,12 @@ The directory into which the `diesel` binary will be copied after it is built. T
 
 Default value: `"target/release/"`
 
+### `TOUCH_CARGO_TOML`
+
+Set this to "1" if this should `touch` the `Cargo.toml` file in the `BUILD_PATH`. This is mostly useful if you're dumb like me and like using diesel for migrations in non-Rust projects.
+
+Default value: `0`
+
 
 ## Development notes
 
